@@ -150,33 +150,61 @@ func renderPDF(backgroundPath: String, outputPath: String) -> Bool {
     }
 
     let outerMargin: CGFloat = 36
-    let titleHeight: CGFloat = 56
     let weekdayHeaderHeight: CGFloat = 32
-    let spacingAfterTitle: CGFloat = 18
-    let gridTop = outerMargin + titleHeight + spacingAfterTitle
+    let spacingAfterTitle: CGFloat = 8
+
+    let monthFont = NSFont(name: "SnellRoundhand-Black", size: 96)
+        ?? NSFont(name: "SnellRoundhand-Bold", size: 96)
+        ?? NSFont(name: "Zapfino", size: 70)
+        ?? NSFont(name: "Apple Chancery", size: 86)
+        ?? NSFont.systemFont(ofSize: 86, weight: .medium)
+    let yearFont = NSFont(name: "Didot", size: 38)
+        ?? NSFont(name: "Baskerville", size: 38)
+        ?? NSFont.systemFont(ofSize: 38, weight: .regular)
+
+    let monthAscent = monthFont.ascender
+    let monthDescent = abs(monthFont.descender)
+    let titleTotalHeight = monthAscent + monthDescent
+
+    let gridTop = outerMargin + titleTotalHeight + spacingAfterTitle
     let gridHeight = pageHeight - gridTop - outerMargin
     let cellWidth = (pageWidth - (outerMargin * 2)) / 7.0
     let cellHeight = (gridHeight - weekdayHeaderHeight) / CGFloat(rows)
 
-    let titleRect = rectFromTop(x: outerMargin, y: outerMargin - 6, width: pageWidth - outerMargin * 2, height: titleHeight)
-    let titleCardRect = titleRect.insetBy(dx: -12, dy: -4)
-    drawRoundedRect(
-        titleCardRect,
-        radius: 18,
-        fill: NSColor(calibratedWhite: 1, alpha: 0.85)
-    )
-    let titleFont = NSFont(name: "SnellRoundhand-Bold", size: 38)
-        ?? NSFont(name: "Didot-Italic", size: 36)
-        ?? NSFont(name: "Baskerville-Italic", size: 36)
-        ?? NSFont.systemFont(ofSize: 36, weight: .medium)
-    drawText(
-        "\(monthName) \(year)",
-        in: titleRect,
-        font: titleFont,
-        color: NSColor(calibratedWhite: 0.10, alpha: 0.92),
-        alignment: .center,
-        kern: 1.2
-    )
+    let monthAttr = NSMutableAttributedString(string: monthName.lowercased(), attributes: [
+        .font: monthFont,
+        .kern: 0.5
+    ])
+    monthAttr.append(NSAttributedString(string: "  \(year)", attributes: [
+        .font: yearFont,
+        .baselineOffset: 22.0,
+        .kern: 0.8
+    ]))
+
+    // Manual horizontal centering via attributed string size.
+    let measuredSize = monthAttr.size()
+    let textOriginX = (pageWidth - measuredSize.width) / 2
+    // Baseline = page top minus margin minus ascent. Use draw(at:) so descenders
+    // (script "j", "g", "y") are not clipped by a containing rect.
+    let baselineY = pageHeight - outerMargin - monthAscent
+
+    let textOrigin = CGPoint(x: textOriginX, y: baselineY)
+
+    // Pass 1: thick white halo behind (stroke painted in white).
+    let haloAttr = NSMutableAttributedString(attributedString: monthAttr)
+    haloAttr.addAttributes([
+        .strokeColor: NSColor.white,
+        .strokeWidth: 26.0,
+        .foregroundColor: NSColor.white
+    ], range: NSRange(location: 0, length: haloAttr.length))
+    haloAttr.draw(at: textOrigin)
+
+    // Pass 2: solid black fill on top.
+    let fillAttr = NSMutableAttributedString(attributedString: monthAttr)
+    fillAttr.addAttributes([
+        .foregroundColor: NSColor.black
+    ], range: NSRange(location: 0, length: fillAttr.length))
+    fillAttr.draw(at: textOrigin)
 
     let weekdayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     let borderColor = NSColor(calibratedWhite: 0.55, alpha: 0.85).cgColor
