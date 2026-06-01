@@ -32,6 +32,27 @@ let palettes: [Palette] = [
         accentColors: [rgb(110, 80, 180), rgb(70, 130, 220), rgb(255, 120, 60)]
     ),
     Palette(
+        name: "summer",
+        leafColors: [rgb(110, 200, 90), rgb(70, 175, 80), rgb(160, 220, 100), rgb(50, 145, 75), rgb(200, 230, 110)],
+        flowerColors: [rgb(255, 220, 60), rgb(255, 110, 130), rgb(255, 165, 70), rgb(255, 90, 110)],
+        berryColors: [rgb(255, 80, 90), rgb(220, 50, 70), rgb(255, 150, 60)],
+        accentColors: [rgb(70, 180, 230), rgb(255, 200, 80), rgb(255, 130, 90)]
+    ),
+    Palette(
+        name: "sea",
+        leafColors: [rgb(60, 165, 165), rgb(40, 130, 150), rgb(110, 200, 195), rgb(20, 100, 130), rgb(150, 215, 200)],
+        flowerColors: [rgb(255, 195, 150), rgb(255, 230, 200), rgb(180, 220, 240), rgb(255, 150, 130)],
+        berryColors: [rgb(255, 110, 90), rgb(220, 80, 100), rgb(70, 160, 200)],
+        accentColors: [rgb(230, 200, 150), rgb(50, 110, 170), rgb(255, 180, 140)]
+    ),
+    Palette(
+        name: "playgrounds",
+        leafColors: [rgb(80, 200, 90), rgb(40, 160, 60), rgb(150, 220, 70), rgb(20, 130, 50)],
+        flowerColors: [rgb(255, 215, 0), rgb(230, 50, 80), rgb(60, 140, 240), rgb(255, 130, 40)],
+        berryColors: [rgb(230, 30, 50), rgb(255, 180, 0), rgb(60, 150, 230)],
+        accentColors: [rgb(180, 80, 200), rgb(255, 110, 60), rgb(50, 180, 220)]
+    ),
+    Palette(
         name: "spring",
         leafColors: [rgb(140, 200, 70), rgb(95, 175, 65), rgb(180, 220, 90), rgb(60, 130, 55), rgb(110, 185, 80)],
         flowerColors: [rgb(255, 205, 70), rgb(245, 130, 160), rgb(170, 130, 230), rgb(255, 165, 90)],

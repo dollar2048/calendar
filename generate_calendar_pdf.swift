@@ -53,37 +53,9 @@ func resolveBackgroundPaths() -> [String] {
     if let entries = try? FileManager.default.contentsOfDirectory(atPath: backgroundsDir) {
         let images = entries
             .filter { $0.lowercased().hasSuffix(".png") || $0.lowercased().hasSuffix(".jpg") }
-            .shuffled()
+            .sorted()
         if !images.isEmpty {
-            // Group by palette name (strip variant suffix like "-1", "-2").
-            // Filename format: "bg-<palette>-<variant>.png" or "bg-<palette>.png".
-            func paletteKey(for filename: String) -> String {
-                let stem = ((filename as NSString).deletingPathExtension as String)
-                let parts = stem.split(separator: "-")
-                guard parts.count >= 2 else { return stem }
-                if parts.count >= 3, Int(parts.last!) != nil {
-                    return parts.dropLast().joined(separator: "-")
-                }
-                return stem
-            }
-
-            var seenPalettes = Set<String>()
-            var picks: [String] = []
-            for image in images {
-                let key = paletteKey(for: image)
-                if seenPalettes.insert(key).inserted {
-                    picks.append(image)
-                    if picks.count == 3 { break }
-                }
-            }
-            // If fewer than 3 distinct palettes, fill from remaining.
-            if picks.count < 3 {
-                for image in images where !picks.contains(image) {
-                    picks.append(image)
-                    if picks.count == 3 { break }
-                }
-            }
-            return picks.map { "\(backgroundsDir)/\($0)" }
+            return images.map { "\(backgroundsDir)/\($0)" }
         }
     }
     let legacy = "\(cwd)/image-1776956639655.png"
